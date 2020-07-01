@@ -8,13 +8,21 @@ function get_snake_river_temp() {
   preg_match_all('/USGS.*\t(.+)\tP$/', $data, $matches);
   $last_temp_c = floatval($matches[1][0]);
   $last_temp_f = 32 + (9/5 * $last_temp_c);
-  return $last_temp_f;
+  return round($last_temp_f, 2);
+}
+
+function get_lk_wash_temp() {
+  $data = file_get_contents('https://www.watertemperature.net/united-states/lake-washington-water-temperature.html');
+  preg_match_all('/The current water temperature.*?(\d+\.\d)/', $data, $matches);
+  $last_temp_f = floatval($matches[1][0]);
+  return round($last_temp_f, 2);
 }
 
 header('Content-Type: application/json');
 
 $result = (object) [
   'snake_river_temp' => get_snake_river_temp(),
+  'lake_washington_temp' => get_lk_wash_temp(),
 ];
 
 echo json_encode($result);
